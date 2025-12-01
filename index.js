@@ -226,6 +226,28 @@ app.delete("/deletePost/:postId/:userId", (req, res) => {
 
 
 
+app.post("/createUser", (req, res) => {
+    const { userId, userName, userPassword, userImage } = req.body;
+
+    if (!userId || !userName || !userPassword) {
+        return res.status(400).json({ message: "Missing required fields!" });
+    }
+
+    const sql = `INSERT INTO users (userId, userName, userPassword, userImage) VALUES (?, ?, ?, ?)`;
+    const values = [userId, userName, userPassword, userImage];
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ message: "Database error!" });
+        }
+        res.status(200).json({ 
+            message: "User created successfully!", 
+            user: { userId, userName, userImage } 
+        });
+    });
+});
+
 
 
 app.listen(port, () => {
